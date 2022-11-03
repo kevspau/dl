@@ -31,6 +31,7 @@ for i in 0..dirs.len - 1:
   stdout.write(name)
   stdout.resetAttributes()
   stdout.setForegroundColor(fgYellow)
+  #*ok so basically dividing by 1m instead of this binary number is the standard but im dumb so yea, too lazy to change since changing it makes the .gitignore go crazy with 2e-06 mb???
   var size = $(int(dirs[i].path.getFileInfo().size)/1_048_576)
   echo fmt"      {size.substr(0, 5)} MB" 
   stdout.resetAttributes()
