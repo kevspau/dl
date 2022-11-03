@@ -7,12 +7,13 @@ type comp = object
   dir: bool
   exec: bool
   sym: bool
+  path: string
 
 var dirs: seq[comp]
 
 
 for k, p in walkDir(getCurrentDir()):
-  dirs.add(comp(name: splitFile(p).name & splitFile(p).ext, dir: if k == pcDir: true else: false, exec: if fpUserExec in p.getFilePermissions(): true else: false, sym: if k == pcLinkToDir or k == pcLinkToFile: true else: false))
+  dirs.add(comp(name: splitFile(p).name & splitFile(p).ext, dir: if k == pcDir: true else: false, exec: if fpUserExec in p.getFilePermissions(): true else: false, sym: if k == pcLinkToDir or k == pcLinkToFile: true else: false, path: p))
 
 for i in 0..dirs.len - 1:
   var name = dirs[i].name
@@ -30,6 +31,6 @@ for i in 0..dirs.len - 1:
   stdout.write(name)
   stdout.resetAttributes()
   stdout.setForegroundColor(fgYellow)
-  var size = $(int(dirs[i].name.getFileInfo().size)/1_048_576)
+  var size = $(int(dirs[i].path.getFileInfo().size)/1_048_576)
   echo fmt"      {size.substr(0, 5)} MB" 
   stdout.resetAttributes()
