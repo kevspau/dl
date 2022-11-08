@@ -1,6 +1,7 @@
 import os
 import strformat
 import terminal
+import strutils
 
 type comp = object
   name: string
@@ -17,6 +18,7 @@ for k, p in walkDir(getCurrentDir()):
 
 for i in 0..dirs.len - 1:
   var name = dirs[i].name
+  var s = "B"
   stdout.setForegroundColor(fgCyan)
   stdout.write("\u2506- ")
   stdout.resetAttributes()
@@ -31,7 +33,25 @@ for i in 0..dirs.len - 1:
   stdout.write(name)
   stdout.resetAttributes()
   stdout.setForegroundColor(fgYellow)
-  #*ok so basically dividing by 1m instead of this binary number is the standard but im dumb so yea, too lazy to change since changing it makes the .gitignore go crazy with 2e-06 mb???
-  var size = $(int(dirs[i].path.getFileInfo().size)/1_048_576)
-  echo fmt"      {size.substr(0, 5)} MB" 
+
+  let osize = dirs[i].path.getFileInfo().size.int
+  var size: float
+  #sets size and type
+  if osize >= 1_048_576:
+    size = osize/1_048_576
+    s = "MB"
+  elif osize >= 1_024:
+    size = osize/1_024
+    s = "kB"
+  else:
+    size = osize.float
+    s = "B"
+  #if the length of the size, not including .s, is bigger than 5, then shorten it
+  let l = replace($size,".", "").len
+  var final: string
+  if l > 5:
+    final = substr($size, 0, 5)
+  else:
+    final = $size
+  echo fmt"      {final} {s}" 
   stdout.resetAttributes()
